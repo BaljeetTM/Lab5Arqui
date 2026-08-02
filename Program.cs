@@ -41,9 +41,8 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
-// Registers the SQLite database context using Entity Framework Core
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("AppDbContext")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("AppDbContext")));
 
 // Configures a volatile server-side ticket store (auth state lost on restart)
 builder.Services.AddDistributedMemoryCache();
@@ -113,6 +112,8 @@ app.MapScalarApiReference();
 
 // Maps the redirect endpoint GET /{shortUrl} from Endpoints/UrlRedirectEndpoint.cs
 app.MapUrlRedirect();
+
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
 // Creates a scope for scoped services (e.g. AppDbContext)
 using (var scope = app.Services.CreateScope())

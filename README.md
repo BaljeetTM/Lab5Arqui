@@ -6,3 +6,13 @@ It serves as a reference implementation for building clean, maintainable, and sc
 
 ---
 &copy; 2026 Arquitectura de Sistemas, DISC, UCN, Chile. All rights reserved.
+
+## Docker
+
+Para levantar Shortly con Docker Compose (aplicación + PostgreSQL), consulta la guía completa en [`docs/docker.md`](docs/docker.md).
+
+Inicio rápido:
+```bash
+cp .env.example .env
+docker compose up --build
+```

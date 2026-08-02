@@ -1,0 +1,56 @@
+services:
+  shortly-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shortly-web
+    ports:
+      - "${WEB_PORT:-8080}:8080"
+    environment:
+      ConnectionStrings__AppDbContext: "Host=shortly-db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      Seed__AdminPassword: "${SEED_ADMIN_PASSWORD:-admin123}"
+    depends_on:
+      shortly-db:
+        condition: service_healthy
+    networks:
+      - shortly-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+
+  shortly-db:
+    image: postgres:16-alpine
+    container_name: shortly-db
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - shortly-db-data:/var/lib/postgresql/data
+    networks:
+      - shortly-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+
+networks:
+  shortly-network:
+    driver: bridge
+
+volumes:
+  shortly-db-data:

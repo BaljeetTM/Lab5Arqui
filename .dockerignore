@@ -1,0 +1,35 @@
+# Build artifacts — regenerated fresh inside the container; copying host
+# binaries (often Windows-targeted) into a Linux image would break the build.
+bin/
+obj/
+**/bin/
+**/obj/
+
+# Version control — irrelevant to the running app, and can be large.
+.git/
+.gitignore
+
+# IDE / editor files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docs and markdown — not needed at runtime, only bloats the build context.
+*.md
+docs/
+
+# Logs
+*.log
+
+# Local secrets / dev config — never send these into the build context.
+.env
+appsettings.Development.json
+
+# Database file (if present from local SQLite testing) — shouldn't be baked into the image.
+*.db
